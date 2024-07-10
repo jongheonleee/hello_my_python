@@ -131,10 +131,29 @@
 > ### 👉 파이썬3에서 int 크기는 매우 큼
 - 파이썬 3에서는 long이 사라지고, int의 크기가 유연해짐(64비트보다 더 큰 공간을 가질 수 있음)
 - 정수 오버플로 발생 거의 안함
-  
-  
 
+<br>
+<br>  
+  
+### 📌 4. 선택하기 : if
 
+- [참고1]
+- <img src="https://github.com/jongheonleee/flow_python/assets/87258372/b3180652-b539-49de-a3c3-0db842464ba5" width="500" height="500"/>
+
+<br>
+
+- [참고2]
+- <img src="https://github.com/jongheonleee/flow_python/assets/87258372/ad07b31c-d2df-4ff4-84e6-16fb84f95060" width="500" height="500"/>
+
+<br>
+
+- [참고3]
+- <img src="https://github.com/jongheonleee/flow_python/assets/87258372/3c9985b0-1d6f-4ca6-b9c9-f4533e312a3e" width="500" height="500"/>
+
+<br>
+
+- [참고4]
+- <img src="https://github.com/jongheonleee/flow_python/assets/87258372/bc9ad8e7-6626-4faa-a3b5-b079e17c9129" width="500" height="500"/>
 
 ### 📋 몰입 리스트
 
