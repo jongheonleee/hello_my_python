@@ -35,6 +35,7 @@
 
 - 매우 유연함. 예를들어서, iterator에서 반복처리 하려는데 내부에 __next__() 메서드가 없어서 에러가 뜰 경우, 동적으로 __next__()를 추가할 수 있음
 - <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/28faac45-455b-43ab-897e-dd80b350eff0">
+- 또한, 파이썬의 경우 피연산자의 순서가 바뀌었을 때는 (a * b -> b * a) 역순 연산자가 사용됨
 
 <br>
 
