@@ -249,19 +249,19 @@ class Vector:
         __setattr__()에 사용할 에러 메시지를 정했지만, 금지된 속성을 더욱 명확히 보여줌
         """
         cls = type(self)
-        if len(name) == 1:  # <1>
-            if name in cls.shortcut_names:  # <2>
+        if len(name) == 1:  
+            if name in cls.shortcut_names:  
                 error = 'readonly attribute {attr_name!r}'
-            elif name.islower():  # <3>
+            elif name.islower():  
                 error = "can't set attributes 'a' to 'z' in {cls_name!r}"
             else:
-                error = ''  # <4>
+                error = ''  
             if error:  # <5>
                 msg = error.format(cls_name=cls.__name__, attr_name=name)
                 raise AttributeError(msg)
-        super().__setattr__(name, value)  # <6>
+        super().__setattr__(name, value)  
 
-    def angle(self, n):  # <2>
+    def angle(self, n):  
         """특정 좌표의 각 좌표를 계산"""
         r = math.sqrt(sum(x * x for x in self[n:]))
         a = math.atan2(r, self[n-1])
@@ -271,7 +271,7 @@ class Vector:
             return a
         
 
-    def angles(self):  # <3>
+    def angles(self):  
         """모든 각 좌표의 반복형을 반환함"""
         return (self.angle(n) for n in range(1, len(self)))
 
@@ -279,14 +279,14 @@ class Vector:
         if fmt_spec.endswith('h'):  # hyperspherical coordinates
             fmt_spec = fmt_spec[:-1]
             coords = itertools.chain([abs(self)],
-                                     self.angles())  # <4>
-            outer_fmt = '<{}>'  # <5>
+                                     self.angles())  
+            outer_fmt = '<{}>' 
         else:
             coords = self
-            outer_fmt = '({})'  # <6>
+            outer_fmt = '({})'  
             
-        components = (format(c, fmt_spec) for c in coords)  # <7>
-        return outer_fmt.format(', '.join(components))  # <8>
+        components = (format(c, fmt_spec) for c in coords)  
+        return outer_fmt.format(', '.join(components))  
 
     @classmethod
     def frombytes(cls, octets):
