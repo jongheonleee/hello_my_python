@@ -343,7 +343,7 @@ class Vector:
 
 ### 11. 파이썬에서 일반적인 매핑형
 
-<img src="" width="500" height="500"/>
+<img src="https://github.com/user-attachments/assets/9601b35f-e9ff-40f7-9680-8e692eee2353" width="500" height="500"/>
 
 - ABC : Abstract Base Class, 추상 베이스 클래스
 - collections.abc 는 자바로 따지면 Collection 프레임워크임
