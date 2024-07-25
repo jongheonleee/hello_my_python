@@ -344,6 +344,7 @@ class Vector:
 ### 11. 파이썬에서 일반적인 매핑형
 
 <img src="" width="500" height="500"/>
+
 - ABC : Abstract Base Class, 추상 베이스 클래스
 - collections.abc 는 자바로 따지면 Collection 프레임워크임
 - 위의 사진에서 알 수 있는 것, 각각 가장 기본 단위의 인터페이스를 만듦. 이를 조합해서 하나의 큰 인터페이스를 만듦. 또 이를 구현해나가면서 특정 클래스를 구현함
