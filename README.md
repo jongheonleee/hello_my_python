@@ -172,6 +172,14 @@
 ### 11. 파이썬스러운 객체
 
 ```python
+from array import array
+import reprlib
+import math
+import numbers
+import functools
+import operator
+import itertools  # <1>
+
 """
 Python의 Vector 제대로 구현한 형태 
 - 이거 스스로 만들 줄 알아야함 
@@ -214,7 +222,8 @@ class Vector:
         hashes = (hash(x) for x in self)
         return functools.reduce(operator.xor, hashes, 0)
 
-    def __abs__(self):
+    def __abs__(self): 
+        """객체의 절대값을 반환하는 함수"""
         return math.sqrt(sum(x * x for x in self))
 
     def __bool__(self):
@@ -236,6 +245,21 @@ class Vector:
     shortcut_names = 'xyzt'
 
     def __getattr__(self, name):
+        """
+        객체의 속성을 가져올 때 호출, 객체에 존재하지 않는 속성에 접근하려고 할 때
+        자동으로 호출됨. 존재하는 속성에 접근할 때는 호출되지 않음
+        
+        # 용도
+        - 동적 속성 : 객체의 속성을 동적으로 생성하거나 변경
+        - 디폴트 값 : 객체에 특정 속성이 없을 때 디폴트 값 제공 가능 
+        - 프로퍼티 접근 로깅 : 속성 접근을 로깅하거나 디버깅할 때 활용
+        
+        # 차이
+        - __getattribute__() : 존재하는/존재하지 않는 속성 접근에 대해 호출. 해당 메서드는 모든 속성 접근을 오버라이드함
+        - __setattr__() : 객체의 속성을 설정할 때 호출함 
+        - __delattr__() : 객체의 속성을 삭제할 때 호출함 
+        
+        """
         cls = type(self)
         if len(name) == 1:
             pos = cls.shortcut_names.find(name)
@@ -246,22 +270,28 @@ class Vector:
 
     def __setattr__(self, name, value):
         """
-        __setattr__()에 사용할 에러 메시지를 정했지만, 금지된 속성을 더욱 명확히 보여줌
+        객체의 속성을 설정할 때 호출함. 속성 할당 연산이 발생할 때마다 호출됨. 
+        이를 통해 속성 설정 동작을 커스터마이징할 수 있음
+        
+        # 용도
+        - 속성 설정 로깅 : 속성 설정 시 로그를 남길 수 있음
+        - 속성 값 검증 : 속성 값의 유효성을 검증할 수 있음
+        - 속성 값 변환 : 설정된 값을 변환하거나 가공가능 
         """
         cls = type(self)
-        if len(name) == 1:  
-            if name in cls.shortcut_names:  
+        if len(name) == 1:  # <1>
+            if name in cls.shortcut_names:  # <2>
                 error = 'readonly attribute {attr_name!r}'
-            elif name.islower():  
+            elif name.islower():  # <3>
                 error = "can't set attributes 'a' to 'z' in {cls_name!r}"
             else:
-                error = ''  
+                error = ''  # <4>
             if error:  # <5>
                 msg = error.format(cls_name=cls.__name__, attr_name=name)
                 raise AttributeError(msg)
-        super().__setattr__(name, value)  
+        super().__setattr__(name, value)  # <6>
 
-    def angle(self, n):  
+    def angle(self, n):  # <2>
         """특정 좌표의 각 좌표를 계산"""
         r = math.sqrt(sum(x * x for x in self[n:]))
         a = math.atan2(r, self[n-1])
@@ -271,25 +301,41 @@ class Vector:
             return a
         
 
-    def angles(self):  
+    def angles(self):  # <3>
         """모든 각 좌표의 반복형을 반환함"""
         return (self.angle(n) for n in range(1, len(self)))
 
     def __format__(self, fmt_spec=''):
+        """
+        객체가 특정 형식으로 문자열로 변환될 때 호출됨. 해당 메서드는 format() 함수나 문자열의 format() 메서드에 
+        의해 사용됨
+        
+        # 용도
+        - 사용자 정의 형식 지정 
+        - 형식 코드 지원 : 객체의 문자열 표현을 세부적으로 조정할 수 있음 
+        """
         if fmt_spec.endswith('h'):  # hyperspherical coordinates
             fmt_spec = fmt_spec[:-1]
             coords = itertools.chain([abs(self)],
-                                     self.angles())  
-            outer_fmt = '<{}>' 
+                                     self.angles())  # <4>
+            outer_fmt = '<{}>'  # <5>
         else:
             coords = self
-            outer_fmt = '({})'  
+            outer_fmt = '({})'  # <6>
             
-        components = (format(c, fmt_spec) for c in coords)  
-        return outer_fmt.format(', '.join(components))  
+        components = (format(c, fmt_spec) for c in coords)  # <7>
+        return outer_fmt.format(', '.join(components))  # <8>
 
     @classmethod
     def frombytes(cls, octets):
+        """
+        @classmethod는 클래스 메서드 정의할 때 사용하는 데코레이터
+        
+        # 특징 
+        - 클래스 메서드에는 cls로 클래스 자체를 첫 번째 인자로 받음 
+        - 스태틱 변수(cv) 사용하면서 작업 처리
+        - 인스턴스가 아닌 클래스 자체에 바인딩 
+        """
         typecode = chr(octets[0])
         memv = memoryview(octets[1:]).cast(typecode)
         return cls(memv)
