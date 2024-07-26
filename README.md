@@ -173,6 +173,7 @@
 
 ```python
 from array import array
+import numbers
 import reprlib
 import math
 import numbers
@@ -197,7 +198,7 @@ class Vector:
 
     def __init__(self, components):
         self._components = array(self.typecode, components)
-        print("iv가 가변인가? " + self._components is components)
+        res = self._components is components
 
     def __iter__(self):
         return iter(self._components)
@@ -215,8 +216,20 @@ class Vector:
                 bytes(self._components))
 
     def __eq__(self, other):
-        return (len(self) == len(other) and
+        if isinstance(other, Vector) : 
+            return (len(self) == len(other) and
                 all(a == b for a, b in zip(self, other)))
+        else : 
+            return NotImplemented
+        
+    def __ne__(self, other) : 
+        eq_result = self == other
+        
+        if eq_result is NotImplemented : 
+            return NotImplemented
+        
+        else : 
+            return not eq_result
 
     def __hash__(self):
         hashes = (hash(x) for x in self)
@@ -225,7 +238,53 @@ class Vector:
     def __abs__(self): 
         """객체의 절대값을 반환하는 함수"""
         return math.sqrt(sum(x * x for x in self))
+    
+    def __neg__(self) : 
+        """ 단항 연산자 오버라이딩 : -x """
+        return Vector(-x for x in self)
+    
+    def __pos__(self) : 
+        """ 단항 연산자 오버라이딩 : +x """
+        return Vector(self)
+    
+    def __add__(self, other) : 
+        """ 
+        덧셈 연산자 오버라이딩 : x + y 
+        
+        - TypeError -> NotImplemented : __add__()와 __radd__() 메서드를 구현해서 + 연산자를 안전하게 오버로드함
+        """
+        try : 
+            pairs = itertools.zip_longest(self, other, fillvalue = 0.0)
+            return Vector(a + b for a, b in pairs) # 불변 처리, 항상 새로운 인스턴스 생성 
+        except TypeError : 
+            return NotImplemented # 파이썬이 __add__() 에러 나고 __radd__() 호출할 수 있게 만듦
+    
+    def __radd__(self, other) :
+        """ __add__()로 위임 """
+        return self + other
 
+    def __mul__(self, scalar) : 
+        if isinstance(scalar, numbers.Real) : # 자료형 검사 
+            return Vector(n * scalar for n in self)
+        else : 
+            return NotImplemented
+    
+    def __rmul__(self, scalar) : 
+        return self * scalar
+    
+    def __matmul__(self, other) : 
+        """
+        @ 연산자는 '행렬 곱셉'을 나타남
+        - a @ b 는 a 행렬과 b 행렬의 내적을 나타냄 
+        """
+        try : 
+            return sum(a * b for a, b in zip(self, other))
+        except TypeError : 
+            return NotImplemented
+        
+    def __rmatmul__(self, other) : 
+        return self @ other
+    
     def __bool__(self):
         return bool(abs(self))
 
@@ -290,7 +349,7 @@ class Vector:
                 msg = error.format(cls_name=cls.__name__, attr_name=name)
                 raise AttributeError(msg)
         super().__setattr__(name, value)  # <6>
-
+    
     def angle(self, n):  # <2>
         """특정 좌표의 각 좌표를 계산"""
         r = math.sqrt(sum(x * x for x in self[n:]))
