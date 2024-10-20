@@ -1,4 +1,9 @@
-# 🏊🏻‍♂️ flow_python 🐍
+# hello my first python 🐍
+
+## 📌 01. 파이썬 데이터 모델 
+
+<br>
+<br>
 
 ### ⭐️ 목표
 > ### 현재 Python의 영향력은 어마어마함
