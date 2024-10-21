@@ -69,7 +69,11 @@ class FrenchDeck :
 
 #### 👉 수치형 흉내 내기(유클리드 벡터 구현)
 
+<br>
+
 <img src="https://github.com/user-attachments/assets/c7db3791-9282-4ff7-8ebd-a657f3d455ab" width="500" height="500"/>
+
+<br>
 
 ```python
 
