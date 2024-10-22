@@ -25,7 +25,6 @@ If the implementation is hard to explain, it's a bad idea.
 If the implementation is easy to explain, it may be a good idea.
 Namespaces are one honking great idea -- let's do more of those!
 
-The Zen of Python, by Tim Peters
 
 아름다움이 추함보다 낫다.
 명시적인 것이 암시적인 것보다 낫다.
