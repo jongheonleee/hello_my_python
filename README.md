@@ -51,6 +51,8 @@ Namespaces are one honking great idea -- let's do more of those!
 <br>
 
 # 01. 들어가며
+(참고 해볼만한 사이트 : http://www.pythontutor.com/)
+
 
 ## 📌 01. 파이썬 데이터 모델 
 
@@ -679,6 +681,130 @@ board
 
 
 <br>
+
+#### 👉 시퀀스의 복합 할당 
+
+```python
+
+# += 연산자 작동하는 방식 탐구
+a += b
+
+# *= 연산자를 가변 시퀀스와 불변 시퀀스에 적용한 예
+l = [1, 2, 3] # 현재 가변 시퀀스(in-place) 
+id(l) # id() : 해시코드 : 객체 지문(디지털 지문) 
+
+# > 345246147
+
+l *= 2 # 내부적으로 __iadd__()를 호출함
+l
+
+# > [1, 2, 3, 1, 2, 3]
+
+id(l)
+# > 345246147
+
+t = (1, 2, 3)
+id(t)
+# > 876765543
+
+t *= 2
+id(t)
+# > 237492031
+
+# list : 가변 - 연산수행(변경) - 같은 객체 반환
+# tuple : 불변 - 연산수행(변경) - 새로운 객체 생성 
+
+```
+
+> - *= 연산자가 작동하도록 만드는 특수 메서드는 `__iadd__()`임
+> - 그런데, `__iadd__()` 메서드가 구현되어 있지 않으면, 파이썬은 대신 `__add__()` 메서드를 호출함.
+> - 예를 들어서, a += b가 있다고 가정했을 때
+> - a가 `__iadd__()` 메서드를 구현하면 구현된 메서드가 호출됨. a가 list, bytearray, array.array 등 가변 시퀀스인 경우 a의 값이 변경됨(이 과정은 a.extend(b)와 유사함)
+> - 그런데 a가 `__iadd__()` 메서드를 구현하지 않는 경우 a += b 표현식은 a = a + b가 되어 먼저 a + b 를 평가하고, 객체를 새로 생성한 후 a에 할당함
+> - 즉, `__iadd__()` 메서드 구현 여부에 따라 a 변수가 가리키는 객체의 정체성이 바뀔 수도 있고 바뀌지 않을 수도 있음
+> - 일반적으로 가변 시퀀스에 대해 `__iadd__()` 메서드를 구현해서 += 연산자가 기존 객체의 내용을 변경하게 만드는 것이 좋음. 불변 시퀀스의 경우에는 이 연산을 수행할 수 없음
+> - 가변 항목을 튜플에 넣는 것은 좋은 생각이 아님
+> - 복합 할당은 원자적인 연산이 아님
+> - 파이썬 바이트코드르 살펴보는 것은 그리 어렵지 않으며, 내부에서 어떤 일이 발생하고 있는지 살펴보는 데 도움이 됨
+
+
+<br>
+
+#### 👉 list.sort()와 sorted() 내장 함수
+
+```python
+
+fruits = ['grape', 'raspberry', 'apple', 'banana']
+
+sorted(fruits)
+# > ['apple', 'banana', 'grape', 'raspberry']
+
+fruits
+# > ['grape', 'raspberry', 'apple', 'banana']
+
+sorted(fruits, reverse=True)
+# > ['raspberry', 'grape', 'banana', 'apple']
+
+fruits.sort()
+fruits
+# > ['apple', 'banana', 'grape', 'raspberry']
+
+```
+
+> - list.sort() 메서드는 사본을 만들지 않고 리스트 내부를 변경해서 정렬함. sort() 메서드는 타깃 객체를 변경하고 새로운 리스트를 생성하지 않았음을 알려주기 위해 None을 반환함
+> - random.shuffle() 함수도 이와 동일하게 작동함
+> - 이와 반대로 sorted() 내장 함수는 새로운 리스트를 생성해서 반환함
+> - 사실 sorted() 함수는 불변 시퀀스 및 제너레이터를 포함해서 반복 가능한 모든 객체를 인수로 받을 수 있음
+> - 입력받은 반복 가능한 객체의 자료형과 무관하게 sorted() 함수는 언제나 새로 생성한 리스트를 반환함
+> - list.sort()와 sorted() 함수 모두 선택적으로 두 개의 키워드를 인수로 받음
+>   - (1) reverse : 이 키워드가 참이면 비교 연산을 반대로 해서  내림차순으로 반환함. 기본값은 False
+>   - (2) key : 정렬에 사용할 키를 생성하기 위해 각 항목에 적용할 함수를 인수로 받음. 예를 들어 문자열의 리스트를 정렬할 때 key=str.lower로 지정하면 대소문자를 구분하지 않고 정렬함
+
+
+<br>
+
+#### 👉 정렬된 시퀀스를 bisect로 관리하기 
+
+```python
+import bisect
+import sys
+
+HAYSTACK = [1, 4, 5, 6, 8, 12, 15, 20, 21, 23, 23, 26, 29, 30]
+NEEDLES = [0, 1, 2, 5, 8, 10, 22, 23, 29, 30, 31]
+
+ROW_FNT = '{0:2d} @ {1:2d}    {2}{0:<2d}'
+
+def demo(bisect_fn) :
+  for needle in reversed(NEEDLES) :
+      position = bisect_fn(HAYSTACK, needle)
+      offset = position * '  |'
+      print(ROW_FNT.format(needle, position, offset))
+
+if __name__ == '__main__' :
+  if sys.argv[-1] == 'left' :
+    bisect_fn = bisect.bisect_left
+
+  else :
+    bisect_fn = bisect.bisect
+
+print('DEMO : ', bisect_fn.__name__)
+print('haystack ->', ' '.join('%2d' % n for n in HAYSTACK))
+demo(bisect_fn)
+
+# 실행 결과 나중에 추가하기  
+
+
+```
+
+> - bisect 모듈은 bisect()와 insort() 함수를 제공함. bisect()는 이진 검색 알고리즘을 이용해서 시퀀스를 검색하고, insort()는 정렬된 시퀀스 안에 항목을 삽임함
+> - bisect(haystack, needle)은 정렬된 시퀀스인 haystack 안에서 오름차순 정렬 상태를 유지한 채로 needle을 추가할 수 있는 위치를 찾아냄. 즉, 해당 위치 앞에는 needle보다 같거나 작은 항목이 옴
+> - bisect(heystack, needle)의 결과값을 인덱스(index)로 사용해서 haystack.insert(index, needle)을 호출하면 needle을 추가할 수 있지만, insort()는 이 두 과정을 더 빠르게 처리함
+> - bisect의 행동은 두 가지 방식으로 조절 가능함
+>   - (1) 선택 인수 lo와 hi를 사용하면 삽입할 때 검색할 시퀀스 영역을 좁힐 수 있음. lo의 기본값은 0, hi의 기본값은 시퀀스의 len()
+>   - (2) bisect는 실제로 bisect_right() 함수의 별명이며, 이 함수의 자매 함수로 bisect_left()가 있음.
+>   - bisect_right()는 기존 항목 바로 뒤를 삽입 위치로 반환하며, bisect_left()는 기존 항목 위치를 삽입 위치로 반환하므로 기존 항목 바로 앞에 삽입됨
+
+
 
 
 <br>
