@@ -239,7 +239,7 @@ abs(v * 3)
 | 산술 연산자           | `__add__ +`, `__sub__ -`, `__mul__ *`, `__truediv__ /`, `__floordiv__ //`, `__mod__ %`, `__divmod__` (divmod()), `__pow__ **` (pow()), `__round__` (round()) |
 | 역순 산술 연산자      | `__radd__`, `__rsub__`, `__rmul__`, `__rtruediv__`, `__rfloordiv__`, `__rmod__`, `__rdivmod__`, `__rpow__` |
 | 복합 할당 산술 연산자 | `__iadd__`, `__isub__`, `__imul__`, `__itruediv__`, `__ifloordiv__`, `__imod__`, `__ipow__` |
-| 비트 연산자           | `__invert__ ~`, `__lshift__ <<`, `__rshift__ >>`, `__and__ &`, `__or__ |`, `__xor__ ^` |
+| 비트 연산자           | `__invert__ ~`, `__lshift__ <<`, `__rshift__ >>`, `__and__ &`, `__or__\|` , `__xor__ ^` |
 | 역순 비트 연산자      | `__rlshift__`, `__rrshift__`, `__rand__`, `__rxor__`, `__ror__`                       |
 | 복합 할당 비트 연산자 | `__ilshift__`, `__irshift__`, `__iand__`, `__ixor__`, `__ior__`                       |
 
